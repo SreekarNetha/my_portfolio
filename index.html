@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aeligeti Sreekar - Portfolio</title>
+    <!-- Tailwind CSS CDN for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;700&display=swap');
+        
+        body {
+            font-family: 'Fira Code', monospace;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            line-height: 1.75;
+            letter-spacing: 0.025em;
+        }
+
+        .section-title {
+            position: relative;
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 2.5rem;
+            color: #58a6ff;
+            text-shadow: 2px 2px 8px rgba(88, 166, 255, 0.2);
+            padding-bottom: 0.5rem;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background-color: #58a6ff;
+            border-radius: 9999px;
+            box-shadow: 0 0 8px #58a6ff;
+        }
+        .card {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: #58a6ff;
+            box-shadow: 0 8px 16px rgba(88, 166, 255, 0.15);
+        }
+        .contact-icon {
+            transition: transform 0.2s ease-in-out;
+        }
+        .contact-icon:hover {
+            transform: scale(1.1);
+        }
+        .gradient-text {
+            background: linear-gradient(45deg, #6EE7B7, #3B82F6, #9333EA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Collapsible content animation */
+        .collapsible-content {
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+            max-height: 0;
+        }
+        .collapsible-content.expanded {
+            max-height: 500px; /* Adjust as needed */
+        }
+        .toggle-icon {
+            transition: transform 0.2s ease-in-out;
+        }
+        .toggle-icon.rotated {
+            transform: rotate(90deg);
+        }
+
+        /* Horizontal Swiper Container */
+        .swiper-container {
+            width: 100%;
+            display: flex;
+            overflow-x: hidden; /* Hide scrollbar for a cleaner look */
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+        .swiper-slide {
+            flex: 0 0 100%;
+            scroll-snap-align: start;
+            padding: 1rem;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .swiper-tabs-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+            gap: 1rem;
+        }
+        .swiper-tab {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            transition: background-color 0.2s, color 0.2s;
+            background-color: #30363d;
+            color: #c9d1d9;
+        }
+        .swiper-tab.active {
+            background-color: #58a6ff;
+            color: #0d1117;
+        }
+
+        /* Loading bar animation */
+        .loading-bar {
+            width: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #58a6ff, #9333ea);
+            border-radius: 9999px;
+            transition: width 1s ease-in-out;
+        }
+
+        /* Loading Screen CSS */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0d1117;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 1000;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        #loading-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .loading-terminal {
+            width: 80%;
+            max-width: 600px;
+            min-height: 200px;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(88, 166, 255, 0.1);
+            position: relative;
+        }
+
+        #loading-text {
+            color: #6EE7B7;
+            text-shadow: 0 0 5px #6EE7B7;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .loading-progress-container {
+            width: 100%;
+            height: 8px;
+            background-color: #30363d;
+            border-radius: 9999px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+
+        #loading-progress-bar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(90deg, #58a6ff, #9333ea);
+            transition: width 0.5s linear;
+        }
+
+        /* Initial state of main content */
+        #main-content {
+            visibility: hidden;
+            opacity: 0;
+            transition: visibility 0s 0.5s, opacity 0.5s ease-in-out;
+        }
+        #main-content.visible {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="flex flex-col items-center justify-center">
+        <div class="loading-terminal">
+            <div class="flex items-center space-x-2 mb-4">
+                <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+            </div>
+            <p class="text-xl text-[#58a6ff] mb-4">&gt; Compiling Portfolio.exe</p>
+            <p id="loading-text" class="text-[#6EE7B7] mb-2"></p>
+            <div class="loading-progress-container">
+                <div id="loading-progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-content">
+        <!-- Header / Navigation -->
+        <header class="sticky top-0 z-50 bg-[#0d1117]/70 backdrop-blur-sm">
+            <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
+                <a href="#" class="text-xl font-bold gradient-text">Aeligeti Sreekar</a>
+                <div class="space-x-6 hidden md:flex">
+                    <a href="#about" class="hover:text-[#58a6ff] transition-colors duration-200">About</a>
+                    <a href="#projects-section" class="hover:text-[#58a6ff] transition-colors duration-200">Projects</a>
+                    <a href="#contact" class="hover:text-[#58a6ff] transition-colors duration-200">Contact</a>
+                </div>
+                <!-- Mobile Menu Button - Placeholder -->
+                <button class="md:hidden text-white focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-6 w-6">
+                        <line x1="4" y1="12" x2="20" y2="12"></line>
+                        <line x1="4" y1="6" x2="20" y2="6"></line>
+                        <line x1="4" y1="18" x2="20" y2="18"></line>
+                    </svg>
+                </button>
+            </nav>
+        </header>
+
+        <main class="container mx-auto px-4 py-8 max-w-5xl">
+
+            <!-- Hero Section -->
+            <section class="min-h-[calc(100vh-6rem)] flex items-center justify-center text-center">
+                <div>
+                    <p class="text-lg text-gray-400 mb-2">Hello, I'm</p>
+                    <h1 class="text-5xl md:text-7xl font-extrabold gradient-text leading-tight">Aeligeti Sreekar</h1>
+                    <p class="text-lg md:text-xl max-w-3xl mx-auto my-6 text-gray-300">
+                        <span class="text-[#8b949e]">Motivated Computer Science student with hands-on experience in AI/ML systems, focusing on Large Language Models, NLP, and autonomous agents.</span>
+                    </p>
+                    <a href="#contact" class="inline-block px-8 py-3 bg-[#58a6ff] text-[#0d1117] font-semibold rounded-full shadow-lg hover:bg-[#4ea2f8] transition-colors duration-300">
+                        Get In Touch
+                    </a>
+                </div>
+            </section>
+
+            <hr class="border-[#30363d] my-12" />
+
+            <!-- About Section -->
+            <section id="about" class="py-16">
+                <h2 class="section-title">About Me</h2>
+                <div class="bg-[#161b22] p-8 rounded-xl card mb-8">
+                    <h3 class="text-2xl font-bold mb-4">Professional Summary</h3>
+                    <p class="text-gray-300 leading-relaxed">
+                        As a motivated Computer Science student, my passion lies in developing innovative AI/ML solutions. My expertise spans large language models (LLMs), natural language processing (NLP), and building autonomous agents. I am adept at using frameworks like PyTorch and Hugging Face, with a strong foundation in Python. I am always eager to contribute to a dynamic team environment and solve challenging problems.
+                    </p>
+                </div>
+                <!-- Education Section -->
+                <div class="bg-[#161b22] p-8 rounded-xl card">
+                    <div class="flex items-center justify-between cursor-pointer" onclick="toggleEducation()">
+                        <h3 class="text-2xl font-bold">Education</h3>
+                        <span class="toggle-icon text-white text-2xl" id="education-details-icon">▶</span>
+                    </div>
+                    <div id="education-details" class="collapsible-content">
+                        <div class="pt-4 border-t border-[#30363d] mt-4">
+                            <p class="text-gray-300">
+                                Bachelor of Technology (B.Tech) in Computer Science<br>
+                                Malla Reddy Institute of Engineering and Technology<br>
+                                Expected: May 2025
+                            </p>
+                            <p class="text-gray-300 mt-4">
+                                Relevant Coursework: Data Structures & Algorithms, Object-Oriented Programming, Operating Systems, Database Management Systems, Artificial Intelligence, Natural Language Processing.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <hr class="border-[#30363d] my-12" />
+
+            <!-- Skills Section -->
+            <section id="skills" class="py-16">
+                <h2 class="section-title">My Skills</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mt-8">
+                    <!-- Programming Languages -->
+                    <div class="card p-6 rounded-xl">
+                        <h3 class="text-xl font-bold mb-4">Programming Languages</h3>
+                        <ul class="space-y-2 text-gray-300">
+                            <li>Python</li>
+                            <li>Java</li>
+                        </ul>
+                    </div>
+                    <!-- AI/ML Frameworks -->
+                    <div class="card p-6 rounded-xl">
+                        <h3 class="text-xl font-bold mb-4">AI/ML Frameworks</h3>
+                        <ul class="space-y-2 text-gray-300">
+                            <li>PyTorch</li>
+                            <li>Hugging Face</li>
+                            <li>Diffusers</li>
+                            <li>Transformers</li>
+                        </ul>
+                    </div>
+                    <!-- Development Practices & Libraries -->
+                    <div class="card p-6 rounded-xl">
+                        <h3 class="text-xl font-bold mb-4">Dev Practices & Libraries</h3>
+                        <ul class="space-y-2 text-gray-300">
+                            <li>OpenAI API</li>
+                            <li>FastAPI</li>
+                            <li>OOP, API Integration</li>
+                            <li>Pandas, NumPy, Matplotlib</li>
+                            <li>MoviePy, GitHub</li>
+                        </ul>
+                    </div>
+                    <!-- Databases & Specialized Skills -->
+                    <div class="card p-6 rounded-xl">
+                        <h3 class="text-xl font-bold mb-4">Databases & AI Concepts</h3>
+                        <ul class="space-y-2 text-gray-300">
+                            <li>SQL, MongoDB</li>
+                            <li>Natural Language Processing</li>
+                            <li>Deep Learning, Semantic Search</li>
+                            <li>Machine Learning</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="border-[#30363d] my-12" />
+
+            <!-- My Works & Projects Section (Horizontal Swipe) -->
+            <section id="projects-section" class="py-16">
+                <h2 class="section-title">My Works & Projects</h2>
+                <div class="swiper-tabs-container">
+                    <div class="swiper-tab active" data-target="my-works-slide">My Works</div>
+                    <div class="swiper-tab" data-target="projects-slide">Projects</div>
+                </div>
+                <div class="loading-bar mx-auto mb-4" id="projects-loading-bar"></div>
+                <div class="swiper-container" id="swiper-container">
+                    
+                    <!-- My Works Slide -->
+                    <div class="swiper-slide" id="my-works-slide">
+                        <div class="card p-8 rounded-xl w-full">
+                            <h3 class="text-xl font-bold mb-2">One-Stop AI Platform</h3>
+                            <p class="text-gray-400 text-sm mb-4">
+                                Technologies: <b>Python</b>, <b>LLMs</b>, <b>Transformers</b>, <b>Diffusers</b>, <b>MoviePy</b>, <b>FastAPI</b>, <b>PyTorch</b>
+                            </p>
+                            <p class="text-gray-300 leading-relaxed">
+                                This project is a powerful, integrated AI platform designed to handle a wide range of tasks from a single interface. It provides functionalities such as text-to-video generation, code debugging and analysis, and other essential AI tasks like natural language processing. The platform is built on a robust FastAPI backend, showcasing an ability to build complex, multi-functional systems. The core of this system is its **multi-AI functionality**, seamlessly integrating various generative models. It not only creates cinematic videos from text prompts but also includes a powerful code debugger and analyzer. This feature allows for the evaluation and correction of code snippets, demonstrating a deep understanding of both creative AI applications and technical problem-solving. This project highlights my proficiency in creating comprehensive, full-stack AI solutions and my ability to integrate disparate technologies into a single cohesive product.
+                            </p>
+                            <div class="mt-6">
+                                <a href="https://drive.google.com/drive/folders/1mprHHW28k1gyBmpdk0oDBc4WTKn9uRP7?usp=sharing" target="_blank" class="text-[#58a6ff] hover:text-white transition-colors duration-300 font-semibold flex items-center w-max">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+                                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                    </svg>
+                                    View Project
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Projects Slide -->
+                    <div class="swiper-slide" id="projects-slide">
+                        <div class="space-y-6 w-full">
+                            <!-- CLI Based Generative AI Project -->
+                            <div class="card p-6 rounded-xl cursor-pointer" onclick="toggleProject('cli-project-details')">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-xl font-bold">CLI Based Generative AI</h3>
+                                    <span class="toggle-icon text-white text-2xl" id="cli-project-details-icon">▶</span>
+                                </div>
+                                <p class="text-gray-400 text-sm mt-2">
+                                    A powerful command-line tool integrating various generative AI models for text, code, images, and more.
+                                </p>
+                                <div id="cli-project-details" class="collapsible-content">
+                                    <div class="pt-4 border-t border-[#30363d] mt-4">
+                                        <p class="text-gray-400 text-sm mb-4">
+                                            Technologies: <b>Python</b>, <b>argparse</b>, <b>Transformers</b>, <b>Diffusers</b>, <b>PyTorch</b>
+                                        </p>
+                                        <p class="text-gray-300 leading-relaxed">
+                                            This project is a versatile CLI tool that leverages a wide array of AI models for tasks such as text-to-image, text-to-3D model generation, text-to-speech, and code generation. It showcases proficiency in integrating complex AI pipelines and building robust, multi-functional applications from a single command-line interface.
+                                        </p>
+                                        <div class="mt-4">
+                                            <a href="https://drive.google.com/drive/folders/1mprHHW28k1gyBmpdk0oDBc4WTKn9uRP7?usp=sharing" target="_blank" class="text-[#58a6ff] hover:text-white transition-colors duration-300 font-semibold flex items-center w-max">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+                                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                                </svg>
+                                                View Project
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Stock Market Trend Prediction Project -->
+                            <div class="card p-6 rounded-xl cursor-pointer" onclick="toggleProject('stock-project-details')">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-xl font-bold">Stock Market Trend Prediction</h3>
+                                    <span class="toggle-icon text-white text-2xl" id="stock-project-details-icon">▶</span>
+                                </div>
+                                <p class="text-gray-400 text-sm mt-2">
+                                    Developed a time-series deep learning model using an LSTM network to predict stock price trends.
+                                </p>
+                                <div id="stock-project-details" class="collapsible-content">
+                                    <div class="pt-4 border-t border-[#30363d] mt-4">
+                                        <p class="text-gray-400 text-sm mb-4">
+                                            Technologies: <b>Python</b>, <b>Machine Learning</b>, <b>LSTM</b>, <b>Keras</b>
+                                        </p>
+                                        <p class="text-gray-300 leading-relaxed">
+                                            The model was optimized through extensive feature engineering and performance tuning to achieve a significant improvement in prediction accuracy. This project demonstrates strong skills in deep learning, time-series analysis, and model optimization.
+                                        </p>
+                                        <div class="mt-4">
+                                            <a href="https://drive.google.com/drive/folders/1mprHHW28k1gyBmpdk0oDBc4WTKn9uRP7?usp=sharing" target="_blank" class="text-[#58a6ff] hover:text-white transition-colors duration-300 font-semibold flex items-center w-max">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+                                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                                </svg>
+                                                View Project
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ID Card Detection & Penalty Mechanism Project -->
+                            <div class="card p-6 rounded-xl cursor-pointer" onclick="toggleProject('id-card-project-details')">
+                                <div class="flex items-center justify-between">
+                                    <h3 class="text-xl font-bold">ID Card Detection & Penalty Mechanism</h3>
+                                    <span class="toggle-icon text-white text-2xl" id="id-card-project-details-icon">▶</span>
+                                </div>
+                                <p class="text-gray-400 text-sm mt-2">
+                                    Built a computer vision model to detect and classify ID cards in real-time using a CNN.
+                                </p>
+                                <div id="id-card-project-details" class="collapsible-content">
+                                    <div class="pt-4 border-t border-[#30363d] mt-4">
+                                        <p class="text-gray-400 text-sm mb-4">
+                                            Technologies: <b>Python</b>, <b>NumPy</b>, <b>Deep Learning</b>, <b>CNN</b>, <b>Reinforcement Learning</b>
+                                        </p>
+                                        <p class="text-gray-300 leading-relaxed">
+                                            The model was trained using a deep learning model with an Artificial Neural Network (ANN). This project showcases hands-on experience in computer vision, real-time object detection, and deep learning model implementation.
+                                        </p>
+                                        <div class="mt-4">
+                                            <a href="https://drive.google.com/drive/folders/1mprHHW28k1gyBmpdk0oDBc4WTKn9uRP7?usp=sharing" target="_blank" class="text-[#58a6ff] hover:text-white transition-colors duration-300 font-semibold flex items-center w-max">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
+                                                    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                                    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                                                </svg>
+                                                View Project
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <hr class="border-[#30363d] my-12" />
+
+            <!-- Career Interests Section -->
+            <section id="career-interests" class="py-16">
+                <h2 class="section-title">Career Interests</h2>
+                <div class="bg-[#161b22] p-8 rounded-xl card">
+                    <p class="text-gray-300 leading-relaxed mb-4">
+                        Based on my skills in AI/ML, NLP, and development, I am interested in roles that allow me to apply and expand these capabilities. My ideal career path involves solving complex problems in a collaborative, innovative environment.
+                    </p>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><b>AI/ML Engineer</b>: Developing and deploying machine learning models.</li>
+                        <li><b>NLP Scientist</b>: Focusing on natural language understanding and generation.</li>
+                        <li><b>Prompt Engineer</b>: Designing and optimizing prompts for large language models.</li>
+                        <li><b>Autonomous Agent Developer</b>: Creating intelligent systems that can perform complex tasks autonomously.</li>
+                        <li><b>Others</b>: Exploring various roles that leverage my AI/ML expertise.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <hr class="border-[#30363d] my-12" />
+            
+            <!-- Known Languages Section -->
+            <section id="languages-known" class="py-16">
+                <h2 class="section-title">Known Languages</h2>
+                <div class="bg-[#161b22] p-8 rounded-xl card">
+                    <ul class="space-y-2 text-gray-300">
+                        <li><b>English</b>: Proficient</li>
+                        <li><b>Telugu</b>: Native</li>
+                        <li><b>Hindi</b>: Native</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <hr class="border-[#30363d] my-12" />
+
+            <!-- Contact Section -->
+            <section id="contact" class="py-16">
+                <h2 class="section-title">Contact Me</h2>
+                <div class="flex flex-col items-center mt-8">
+                    <p class="text-xl mb-6 text-gray-300">I'm always open to new opportunities and collaborations.</p>
+                    <div class="flex space-x-6">
+                        <a href="mailto:sreekar7sree@gmail.com" target="_blank" class="contact-icon" title="Email">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white hover:text-[#58a6ff]">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                        </a>
+                        <a href="https://linkedin.com/in/aeligeti-sreekar-15219a225" target="_blank" class="contact-icon" title="LinkedIn">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white hover:text-[#58a6ff]">
+                                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+                                <rect x="2" y="9" width="4" height="12"></rect>
+                                <circle cx="4" cy="4" r="2"></circle>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="bg-[#161b22] text-center p-4 mt-8">
+            <p class="text-gray-400">© 2024 Aeligeti Sreekar. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        const swiperContainer = document.getElementById('swiper-container');
+        const swiperTabs = document.querySelectorAll('.swiper-tab');
+        const projectsLoadingBar = document.getElementById('projects-loading-bar');
+        const loadingScreen = document.getElementById('loading-screen');
+        const mainContent = document.getElementById('main-content');
+        const loadingText = document.getElementById('loading-text');
+        const loadingProgressBar = document.getElementById('loading-progress-bar');
+        
+        const loadingMessages = [
+            "Initializing AI core...",
+            "Accessing data streams...",
+            "Loading project dependencies...",
+            "Building portfolio assets...",
+            "Rendering user interface...",
+            "Finalizing security protocols..."
+        ];
+
+        // Function to start the main portfolio logic
+        function initializePortfolio() {
+            // Re-define swiper functions here to ensure elements exist
+            function goToSlide(targetId) {
+                projectsLoadingBar.style.width = '0%';
+                projectsLoadingBar.style.transition = 'none';
+                setTimeout(() => {
+                    projectsLoadingBar.style.transition = 'width 1s ease-in-out';
+                    projectsLoadingBar.style.width = '100%';
+                }, 10);
+                
+                setTimeout(() => {
+                    const targetSlide = document.getElementById(targetId);
+                    if (targetSlide) {
+                        swiperContainer.scrollTo({
+                            left: targetSlide.offsetLeft,
+                            behavior: 'smooth'
+                        });
+                    }
+                    projectsLoadingBar.style.width = '0%';
+                }, 1000);
+            }
+            
+            swiperTabs.forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    swiperTabs.forEach(t => t.classList.remove('active'));
+                    e.target.classList.add('active');
+                    const targetId = e.target.getAttribute('data-target');
+                    goToSlide(targetId);
+                });
+            });
+
+            // Toggle functions for collapsible content
+            window.toggleEducation = function() {
+                const content = document.getElementById('education-details');
+                const icon = document.getElementById('education-details-icon');
+                content.classList.toggle('expanded');
+                icon.classList.toggle('rotated');
+            }
+
+            window.toggleProject = function(id) {
+                const content = document.getElementById(id);
+                const icon = document.getElementById(id + '-icon');
+                const otherCollapsibles = document.querySelectorAll('.collapsible-content.expanded');
+                otherCollapsibles.forEach(item => {
+                    if (item.id !== id) {
+                        item.classList.remove('expanded');
+                        const otherIcon = document.getElementById(item.id.replace('-details', '-details-icon'));
+                        if (otherIcon) {
+                            otherIcon.classList.remove('rotated');
+                        }
+                    }
+                });
+                content.classList.toggle('expanded');
+                icon.classList.toggle('rotated');
+            }
+        }
+
+        // The loading animation sequence
+        function startLoadingAnimation() {
+            let progress = 0;
+            let messageIndex = 0;
+
+            const interval = setInterval(() => {
+                progress += 10;
+                loadingProgressBar.style.width = `${progress}%`;
+
+                // Update text
+                if (progress <= 100) {
+                    loadingText.textContent = `> ${loadingMessages[messageIndex]}`;
+                    messageIndex = (messageIndex + 1) % loadingMessages.length;
+                }
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    loadingText.textContent = "> Loading Complete. Press any key to continue...";
+                    
+                    // Allow the user to press a key to continue, or fade out automatically
+                    function finishLoading() {
+                        loadingScreen.classList.add('hidden');
+                        mainContent.classList.add('visible');
+                        initializePortfolio(); // Run the main portfolio logic
+                        document.removeEventListener('keydown', finishLoading);
+                        document.removeEventListener('click', finishLoading);
+                    }
+
+                    document.addEventListener('keydown', finishLoading);
+                    document.addEventListener('click', finishLoading);
+                    
+                    // Fallback to auto-fade after a short delay
+                    setTimeout(finishLoading, 2000);
+                }
+            }, 500); // Animation steps
+        }
+
+        window.onload = startLoadingAnimation;
+    </script>
+</body>
+</html>
