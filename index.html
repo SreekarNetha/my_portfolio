@@ -261,7 +261,7 @@
                 <div class="bg-[#161b22] p-8 rounded-xl card">
                     <div class="flex items-center justify-between cursor-pointer" onclick="toggleEducation()">
                         <h3 class="text-2xl font-bold">Education</h3>
-                        <span class="toggle-icon text-white text-2xl" id="education-details-icon">▶</span>
+                        <span class="toggle-icon text-white text-2xl" id="education-details-icon">></span>
                     </div>
                     <div id="education-details" class="collapsible-content">
                         <div class="pt-4 border-t border-[#30363d] mt-4">
@@ -328,6 +328,23 @@
 
             <hr class="border-[#30363d] my-12" />
 
+            <!-- Professional Experience Section -->
+            <section id="experience" class="py-16">
+                <h2 class="section-title">Professional Experience</h2>
+                <div class="space-y-6">
+                    <div class="card p-8 rounded-xl">
+                        <h3 class="text-2xl font-bold text-[#58a6ff]">Co-founder & CTO</h3>
+                        <p class="text-gray-400 font-bold">Avyagrah Tech Innovations</p>
+                        <p class="text-gray-300 mt-4">Leading technical strategy and innovation for AI-driven solutions and product architecture. On a mission to build the India's first trusted, transparent and safest FinTech ecosystem.</p>
+                    </div>
+                    <div class="card p-8 rounded-xl">
+                        <h3 class="text-2xl font-bold text-[#58a6ff]">Co-founder & CTO</h3>
+                        <p class="text-gray-400 font-bold">TimePe (Backed by Avyagrah Tech Innovations)</p>
+                        <p class="text-gray-300 mt-4">Architecting a full-stack digital financial ecosystem ensuring the privacy, safety and transparency by integrating UPI, AEPS, BBPS, and micro-ATM services. Driving financial inclusion through a distribution-first strategy that empowers retailers as last-mile financial agents across Bharat.</p>
+                    </div>
+                </div>
+            </section>
+
             <!-- My Works & Projects Section (Horizontal Swipe) -->
             <section id="projects-section" class="py-16">
                 <h2 class="section-title">My Works & Projects</h2>
@@ -339,6 +356,45 @@
                 <div class="swiper-container" id="swiper-container">
                     
                     <!-- My Works Slide -->
+                    <div class="swiper-slide" id="my-works-slide">
+    <div class="flex flex-col space-y-6 w-full">
+        
+        <div class="card p-8 rounded-xl w-full">
+            <h3 class="text-xl font-bold mb-2 text-[#58a6ff]">No-Code ML Pipeline Builder</h3>
+            <p class="text-gray-400 text-sm mb-4">
+                Technologies: <b>Python</b>, <b>Streamlit</b>, <b>Scikit-Learn</b>, <b>Pandas</b>
+            </p>
+            <p class="text-gray-300 leading-relaxed">
+                A comprehensive no-code machine learning tool designed to automate data science workflows. 
+                Users can upload datasets, perform automated preprocessing such as Standardization and Normalization, 
+                and train classification models like Logistic Regression and Decision Trees through an interactive interface.
+            </p>
+            <div class="mt-6">
+                <a href="https://no-code-ml-pipeline-assignment-rkzjdjq86pnkpren5pcrwj.streamlit.app/" target="_blank" class="text-[#58a6ff] hover:text-white transition-colors duration-300 font-semibold flex items-center w-max">
+                    <span class="mr-2">Visit Live Project</span> >
+                </a>
+            </div>
+        </div>
+
+        <div class="card p-8 rounded-xl w-full">
+            <h3 class="text-xl font-bold mb-2 text-[#58a6ff]">Stock Market Trend Prediction</h3>
+            <p class="text-gray-400 text-sm mb-4">
+                Technologies: <b>Python</b>, <b>Machine Learning</b>, <b>LSTM</b>, <b>Keras</b>
+            </p>
+            <p class="text-gray-300 leading-relaxed">
+                Developed a time-series deep learning model using an LSTM network to predict stock price trends. 
+                The model was optimized through extensive feature engineering and performance tuning to achieve 
+                significant improvements in prediction accuracy.
+            </p>
+            <div class="mt-6">
+                <a href="https://stock-market-prediction-a3frsapyiwquxg7wxxzmmf.streamlit.app/" target="_blank" class="text-[#58a6ff] hover:text-white transition-colors duration-300 font-semibold flex items-center w-max">
+                    <span class="mr-2">Visit Live Project</span> >
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
                     <div class="swiper-slide" id="my-works-slide">
                         <div class="card p-8 rounded-xl w-full">
                             <h3 class="text-xl font-bold mb-2">One-Stop AI Platform</h3>
@@ -367,7 +423,7 @@
                             <div class="card p-6 rounded-xl cursor-pointer" onclick="toggleProject('cli-project-details')">
                                 <div class="flex items-center justify-between">
                                     <h3 class="text-xl font-bold">CLI Based Generative AI</h3>
-                                    <span class="toggle-icon text-white text-2xl" id="cli-project-details-icon">▶</span>
+                                    <span class="toggle-icon text-white text-2xl" id="cli-project-details-icon">></span>
                                 </div>
                                 <p class="text-gray-400 text-sm mt-2">
                                     A powerful command-line tool integrating various generative AI models for text, code, images, and more.
@@ -397,7 +453,7 @@
                             <div class="card p-6 rounded-xl cursor-pointer" onclick="toggleProject('stock-project-details')">
                                 <div class="flex items-center justify-between">
                                     <h3 class="text-xl font-bold">Stock Market Trend Prediction</h3>
-                                    <span class="toggle-icon text-white text-2xl" id="stock-project-details-icon">▶</span>
+                                    <span class="toggle-icon text-white text-2xl" id="stock-project-details-icon">></span>
                                 </div>
                                 <p class="text-gray-400 text-sm mt-2">
                                     Developed a time-series deep learning model using an LSTM network to predict stock price trends.
@@ -427,7 +483,7 @@
                             <div class="card p-6 rounded-xl cursor-pointer" onclick="toggleProject('id-card-project-details')">
                                 <div class="flex items-center justify-between">
                                     <h3 class="text-xl font-bold">ID Card Detection & Penalty Mechanism</h3>
-                                    <span class="toggle-icon text-white text-2xl" id="id-card-project-details-icon">▶</span>
+                                    <span class="toggle-icon text-white text-2xl" id="id-card-project-details-icon">></span>
                                 </div>
                                 <p class="text-gray-400 text-sm mt-2">
                                     Built a computer vision model to detect and classify ID cards in real-time using a CNN.
@@ -491,7 +547,7 @@
             </section>
             
             <hr class="border-[#30363d] my-12" />
-
+            
             <!-- Contact Section -->
             <section id="contact" class="py-16">
                 <h2 class="section-title">Contact Me</h2>
